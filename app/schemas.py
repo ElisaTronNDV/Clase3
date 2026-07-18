@@ -21,3 +21,13 @@ class LoginRequest(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
+
+class SystemConfigOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    tolerance_mm: float
+
+
+class SystemConfigUpdate(BaseModel):
+    tolerance_mm: float = Field(gt=0)

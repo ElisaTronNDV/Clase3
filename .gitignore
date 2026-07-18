@@ -9,6 +9,9 @@ __pycache__/
 
 # Base de datos local
 *.db
+*.db-journal
+*.db-wal
+*.db-shm
 
 # Frontend
 frontend/node_modules/

@@ -1,7 +1,12 @@
 import os
+from pathlib import Path
 
 os.environ.setdefault("SECRET_KEY", "test-secret-key")
-os.environ["DATABASE_URL"] = "sqlite:///./test.db"
+# Ruta absoluta fuera de /mnt/c: en WSL, SQLite sobre un disco de Windows puede
+# fallar con "disk I/O error" por el locking de archivos.
+_test_db_dir = Path.home() / ".local" / "share" / "dyp-lasercore"
+_test_db_dir.mkdir(parents=True, exist_ok=True)
+os.environ["DATABASE_URL"] = f"sqlite:///{_test_db_dir / 'test.db'}"
 
 import pytest
 from fastapi.testclient import TestClient
