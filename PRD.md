@@ -44,16 +44,17 @@ Automatizar la captura de datos desde el archivo de corte (.pdf) para la generac
 - RF-17: El sistema debe contar con un apartado de configuración donde se defina el Margen de Tolerancia Dimensional (en mm). Valor por defecto: 1.0 mm.
 
 ### Seguridad y Acceso
-- RF-18: El sistema debe presentar una pantalla de inicio para la autenticación de usuarios mediante Usuario y Contraseña.
+- RF-18: El sistema debe presentar una pantalla de inicio para la autenticación de usuarios mediante Email y Contraseña.
   - RF-18-a: El sistema debe restringir el acceso a las funcionalidades únicamente a usuarios autenticados.
-- RF-19: El sistema debe permitir el alta de nuevos usuarios (nombre de usuario y contraseña) de forma sencilla.
+- RF-19: El sistema debe permitir el alta de nuevos usuarios (email y contraseña) de forma sencilla.
   - RF-19-a: El sistema debe otorgar, en esta etapa, acceso total a todos los módulos a todo usuario autenticado, dado que no existen roles ni permisos diferenciados.
 
 ## Requerimientos No Funcionales
 - RNF-01: La extracción de datos del PDF debe tener una tasa de acierto superior al 98%.
 - RNF-02: El procesamiento del PDF no debe demorar más de 10 segundos.
 - RNF-03: El tiempo de respuesta para listados/búsquedas deberá ser menor a 2 segundos (p95).
-- RNF-04: Las contraseñas deben almacenarse con hash seguro (bcrypt/argon2), nunca en texto plano; la sesión expira tras 24 h de inactividad.
+- RNF-04: Las contraseñas deben almacenarse con hash seguro (bcrypt/argon2), nunca en texto plano.
+- RNF-05: La sesión del usuario debe expirar tras 24 h de inactividad.
 - RNF-06: Los códigos de barras generados para las órdenes de trabajo deben ser legibles a resoluciones de impresión estándar (300 DPI). El ancho de barra mínimo (X-dimension) no debe ser inferior a 0.3mm para garantizar la lectura con escáneres ópticos y cámaras de dispositivos móviles.
 
 ## Criterios de Aceptación
@@ -63,13 +64,15 @@ AC-02 (RF-01): Dado un archivo con una extensión distinta a PDF (ej: .xlsx o .j
 
 AC-03 (RF-02): Dado un archivo PDF de corte con campos "Multiplicidad: 1", "Dimensiones: 3000 x 1500", "Espesor: 2.100", "Material: SAE_1010" y "Tiempo de ejecución: 00.01:22", cuando el usuario lo sube al sistema, entonces el sistema debe extraer y mostrar esos valores exactos en los campos correspondientes para su validación.
 
+AC-03-a (RF-02): Dado un archivo PDF de corte con un listado de piezas que incluye descripción y cantidad para cada ítem, cuando el usuario lo sube al sistema, entonces el sistema debe extraer cada pieza del listado junto con su cantidad correspondiente.
+
 AC-04 (RF-02-a): Dado un ítem del listado de piezas con descripción "Saved scrap" y nombre técnico "800x400" en el campo 'Pieza', cuando el sistema procesa el archivo, entonces debe extraer 800 mm de largo y 400 mm de ancho como dimensiones del recorte.
 
 AC-05 (RF-03): Dada la confirmación de los datos extraídos, cuando el usuario confirma la creación de la orden, entonces el sistema debe generar un código único secuencial NEST y asignarlo a la nueva orden de trabajo.
 
 AC-06 (RF-04): Dada una orden de trabajo con datos confirmados, cuando el usuario finaliza la confirmación, entonces el sistema debe guardarla en la base de datos con estado "vigente".
 
-AC-07 (RF-04-a): Dada una orden de trabajo guardada, cuando se confirma la orden, entonces el sistema debe imprimir un documento incluyendo el código de barras del código NEST y el detalle de las piezas. El código de barras debe ser decodificable por un lector estándar a resoluciones de impresión típicas (≥150 DPI) — no alcanza con que la imagen esté presente visualmente.
+AC-07 (RF-04-a): Dada una orden de trabajo guardada, cuando se confirma la orden, entonces el sistema debe imprimir un documento incluyendo el código de barras del código NEST y el detalle de las piezas. El código de barras debe ser decodificable por un lector estándar a resoluciones de impresión estándar (≥300 DPI) — no alcanza con que la imagen esté presente visualmente.
 
 AC-08 (RF-05): Dada la confirmación de la orden de trabajo, cuando el sistema identifica el producto correspondiente en el maestro, entonces debe comprometer automáticamente el stock de chapa según la multiplicidad indicada.
 
@@ -107,20 +110,30 @@ AC-22 (RF-13): Dado que el usuario intenta confirmar el alta de un nuevo product
 
 AC-23 (RF-15): Dado que el usuario intenta editar un producto, cuando accede al formulario de edición, entonces el campo stock comprometido debe estar bloqueado para su edición.
 
+AC-23-a (RF-15): Dado que el usuario edita un producto existente modificando un campo permitido (ej. punto de pedido) con un valor válido, cuando guarda los cambios, entonces el sistema debe persistir el nuevo valor y reflejarlo en el listado de productos.
+
 AC-24 (RF-16): Dado un usuario autenticado en el módulo de Inventario, cuando accede a la sección de productos, entonces el sistema debe mostrar el listado completo de productos del maestro.
 
 AC-25 (RF-17): Dado un usuario autenticado en el apartado de Configuración, cuando visualiza el Margen de Tolerancia Dimensional sin haberlo modificado previamente, entonces el sistema debe mostrar el valor por defecto de 1.0 mm.
 
-AC-26 (RF-18): Dado un usuario sin sesión iniciada, cuando accede a la URL del sistema, entonces el sistema debe mostrar la pantalla de login solicitando usuario y contraseña.
+AC-25-a (RF-17): Dado un usuario que modifica el Margen de Tolerancia Dimensional a un valor válido y lo guarda, cuando el sistema realiza una búsqueda de coincidencia de producto (RF-05 o RF-11), entonces debe utilizar el nuevo valor configurado en lugar del valor por defecto.
+
+AC-26 (RF-18): Dado un usuario sin sesión iniciada, cuando accede a la URL del sistema, entonces el sistema debe mostrar la pantalla de login solicitando email y contraseña.
 
 AC-27 (RF-18-a): Dado un usuario no autenticado, cuando intenta acceder a cualquier página del sistema, entonces el sistema debe redirigirlo al login.
 
 AC-28 (RF-19): Dado un usuario que se quiere registrar, cuando el email ingresado ya pertenece a un usuario existente del sistema, entonces el sistema debe informar el error y rechazar el alta.
 
+AC-28-a (RF-19): Dado un usuario que se quiere registrar, cuando ingresa un email no registrado previamente junto con una contraseña válida y confirma, entonces el sistema debe crear la cuenta exitosamente.
+
+AC-29 (RF-19-a): Dado un usuario autenticado, cuando accede a cualquier módulo del sistema (Oficina, Taller, Inventario, Configuración), entonces el sistema debe conceder el acceso sin restricciones adicionales de rol o permiso.
+
 ## Fuera de Alcance
 Órdenes de compra. Procesos de facturación y generación de remitos. El sistema se limita a la alerta informativa de reposición.
 
 Configuración de roles y permisos de usuarios.
+
+Aislamiento de datos por usuario: todos los usuarios autenticados comparten el mismo espacio de datos (workspace compartido), consistente con RF-19-a.
 
 ## Riesgos y Dependencias
 - Riesgo:
