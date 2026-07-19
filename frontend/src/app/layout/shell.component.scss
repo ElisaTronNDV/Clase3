@@ -1,0 +1,79 @@
+.shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+  flex-shrink: 0;
+  padding: 1rem;
+  border-right: 1px solid #e0e0e0;
+  gap: 1.5rem;
+}
+
+.brand {
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  li {
+    a {
+      display: block;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      text-decoration: none;
+      color: inherit;
+
+      &.active {
+        background: #e8eaf6;
+        font-weight: 600;
+      }
+
+      &:hover {
+        background: #f0f0f0;
+      }
+    }
+  }
+
+  li.disabled {
+    padding: 0.5rem 0.75rem;
+    color: #9e9e9e;
+    cursor: not-allowed;
+  }
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .user-email {
+    font-size: 0.8rem;
+    color: #616161;
+    margin: 0;
+    word-break: break-all;
+  }
+
+  button {
+    padding: 0.5rem;
+    cursor: pointer;
+  }
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}

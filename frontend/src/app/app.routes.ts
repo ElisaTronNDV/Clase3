@@ -14,14 +14,34 @@ export const routes: Routes = [
       import('./features/auth/register/register.component').then((m) => m.RegisterComponent)
   },
   {
-    path: 'home',
+    path: '',
     canActivate: [authGuard],
-    loadComponent: () => import('./features/home/home.component').then((m) => m.HomeComponent)
-  },
-  {
-    path: 'configuracion',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/config/config.component').then((m) => m.ConfigComponent)
+    loadComponent: () => import('./layout/shell.component').then((m) => m.ShellComponent),
+    children: [
+      {
+        path: 'home',
+        loadComponent: () => import('./features/home/home.component').then((m) => m.HomeComponent)
+      },
+      {
+        path: 'configuracion',
+        loadComponent: () => import('./features/config/config.component').then((m) => m.ConfigComponent)
+      },
+      {
+        path: 'inventario',
+        loadComponent: () =>
+          import('./features/inventory/inventory-list.component').then((m) => m.InventoryListComponent)
+      },
+      {
+        path: 'inventario/nuevo',
+        loadComponent: () =>
+          import('./features/inventory/inventory-form.component').then((m) => m.InventoryFormComponent)
+      },
+      {
+        path: 'inventario/:id/editar',
+        loadComponent: () =>
+          import('./features/inventory/inventory-form.component').then((m) => m.InventoryFormComponent)
+      }
+    ]
   },
   { path: '**', redirectTo: 'home' }
 ];

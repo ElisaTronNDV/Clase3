@@ -1,0 +1,47 @@
+<div class="inventory-page">
+  <div class="header">
+    <h1>Inventario</h1>
+    <a routerLink="/inventario/nuevo" class="new-product-link">+ Nuevo producto</a>
+  </div>
+
+  @if (isLoading()) {
+    <p>Cargando...</p>
+  } @else if (errorMessage()) {
+    <p class="form-error">{{ errorMessage() }}</p>
+  } @else if (products().length === 0) {
+    <p>No hay productos cargados todavía.</p>
+  } @else {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Material</th>
+            <th>Espesor (mm)</th>
+            <th>Largo (mm)</th>
+            <th>Ancho (mm)</th>
+            <th>Stock</th>
+            <th>Stock Comprometido</th>
+            <th>Punto de Pedido</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (product of products(); track product.id) {
+            <tr>
+              <td>{{ product.id }}</td>
+              <td>{{ product.material }}</td>
+              <td>{{ product.thickness_mm }}</td>
+              <td>{{ product.length_mm }}</td>
+              <td>{{ product.width_mm }}</td>
+              <td>{{ product.stock }}</td>
+              <td>{{ product.committed_stock }}</td>
+              <td>{{ product.reorder_point }}</td>
+              <td><a [routerLink]="['/inventario', product.id, 'editar']">Editar</a></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

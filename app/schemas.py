@@ -31,3 +31,34 @@ class SystemConfigOut(BaseModel):
 
 class SystemConfigUpdate(BaseModel):
     tolerance_mm: float = Field(gt=0)
+
+
+class ProductCreate(BaseModel):
+    material: str = Field(min_length=1)
+    thickness_mm: float = Field(gt=0)
+    length_mm: float = Field(gt=0)
+    width_mm: float = Field(gt=0)
+    stock: int = Field(ge=0)
+    reorder_point: int = Field(ge=0)
+
+
+class ProductUpdate(BaseModel):
+    material: str = Field(min_length=1)
+    thickness_mm: float = Field(gt=0)
+    length_mm: float = Field(gt=0)
+    width_mm: float = Field(gt=0)
+    stock: int = Field(ge=0)
+    reorder_point: int = Field(ge=0)
+
+
+class ProductOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    material: str
+    thickness_mm: float
+    length_mm: float
+    width_mm: float
+    stock: int
+    committed_stock: int
+    reorder_point: int

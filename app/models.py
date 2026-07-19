@@ -18,3 +18,16 @@ class SystemConfig(Base):
 
     id = Column(Integer, primary_key=True)
     tolerance_mm = Column(Float, nullable=False, default=1.0)
+
+
+class Product(Base):
+    __tablename__ = "products"
+
+    id = Column(Integer, primary_key=True, index=True)
+    material = Column(String, nullable=False, index=True)
+    thickness_mm = Column(Float, nullable=False)
+    length_mm = Column(Float, nullable=False)
+    width_mm = Column(Float, nullable=False)
+    stock = Column(Integer, nullable=False, default=0)
+    committed_stock = Column(Integer, nullable=False, default=0)
+    reorder_point = Column(Integer, nullable=False, default=0)

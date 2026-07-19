@@ -1,0 +1,23 @@
+<div class="shell">
+  <nav class="sidebar">
+    <a routerLink="/home" class="brand">DyP LaserCore</a>
+
+    <ul class="nav-list">
+      <li><a routerLink="/configuracion" routerLinkActive="active">Configuración</a></li>
+      <li><a routerLink="/inventario" routerLinkActive="active">Inventario</a></li>
+      <li class="disabled" title="Próximamente">Oficina</li>
+      <li class="disabled" title="Próximamente">Taller</li>
+    </ul>
+
+    <div class="sidebar-footer">
+      @if (currentUser(); as user) {
+        <p class="user-email">{{ user.email }}</p>
+      }
+      <button type="button" (click)="logout()">Cerrar sesión</button>
+    </div>
+  </nav>
+
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>

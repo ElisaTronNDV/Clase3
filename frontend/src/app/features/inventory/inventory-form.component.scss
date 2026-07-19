@@ -1,22 +1,33 @@
-.config-page {
+.inventory-form-page {
   padding: 2rem 1.5rem;
 }
 
-.config-form {
+.product-form {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   width: 100%;
-  max-width: 320px;
+  max-width: 360px;
 
   input {
     padding: 0.5rem;
     font-size: 1rem;
+
+    &:disabled {
+      background: #f0f0f0;
+      color: #757575;
+    }
   }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
 
   button {
-    margin-top: 1rem;
-    padding: 0.6rem;
+    padding: 0.6rem 1rem;
     font-size: 1rem;
     cursor: pointer;
   }
@@ -25,12 +36,6 @@
 .field-error,
 .form-error {
   color: #c62828;
-  font-size: 0.85rem;
-  margin: 0;
-}
-
-.form-success {
-  color: #2e7d32;
   font-size: 0.85rem;
   margin: 0;
 }
