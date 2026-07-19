@@ -94,6 +94,14 @@ export class OrdersService {
     return this.http.get<WorkOrder>(`${environment.apiUrl}/orders/${id}`);
   }
 
+  getOrderByNestCode(nestCode: string): Observable<WorkOrder> {
+    return this.http.get<WorkOrder>(`${environment.apiUrl}/orders/by-nest-code/${nestCode}`);
+  }
+
+  closeOrder(id: number): Observable<WorkOrder> {
+    return this.http.post<WorkOrder>(`${environment.apiUrl}/orders/${id}/close`, {});
+  }
+
   getBarcodeBlob(id: number): Observable<Blob> {
     return this.http.get(`${environment.apiUrl}/orders/${id}/barcode`, { responseType: 'blob' });
   }

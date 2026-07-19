@@ -1,0 +1,141 @@
+<div class="scan-order-page">
+  <h1>Taller — Finalizar Orden de Trabajo</h1>
+
+  @if (order(); as o) {
+    <div class="order-card">
+      <h2>Orden {{ o.nest_code }}</h2>
+      <p class="order-status">
+        Estado: <strong [class.closed]="o.status === 'cerrada'">{{ o.status }}</strong>
+      </p>
+      @if (o.low_stock_warning) {
+        <p class="stock-warning">⚠ El stock del producto quedó en o por debajo del punto de pedido.</p>
+      }
+
+      <dl class="order-details">
+        <dt>Material</dt>
+        <dd>{{ o.material }}</dd>
+        <dt>Espesor (mm)</dt>
+        <dd>{{ o.thickness_mm }}</dd>
+        <dt>Dimensiones (mm)</dt>
+        <dd>{{ o.length_mm }} x {{ o.width_mm }}</dd>
+        <dt>Multiplicidad</dt>
+        <dd>{{ o.multiplicidad }}</dd>
+      </dl>
+
+      <h3>Piezas</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Pieza</th>
+              <th>Descripción</th>
+              <th>Cantidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (pieza of o.piezas; track pieza.pieza) {
+              <tr>
+                <td>{{ pieza.pieza }}</td>
+                <td>{{ pieza.descripcion }}</td>
+                <td>{{ pieza.cantidad }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (o.recortes.length > 0) {
+        <h3>Recortes</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Largo (mm)</th>
+                <th>Ancho (mm)</th>
+                <th>Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (recorte of o.recortes; track recorte.pieza) {
+                <tr>
+                  <td>{{ recorte.largo_mm }}</td>
+                  <td>{{ recorte.ancho_mm }}</td>
+                  <td>{{ recorte.cantidad }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      @if (closeSuccessMessage()) {
+        <p class="form-success">{{ closeSuccessMessage() }}</p>
+      }
+      @if (errorMessage()) {
+        <p class="form-error">{{ errorMessage() }}</p>
+      }
+
+      <div class="order-actions">
+        @if (o.status === 'vigente') {
+          <button type="button" class="btn btn-primary" [disabled]="isClosing()" (click)="finalizeOrder()">
+            {{ isClosing() ? 'Finalizando...' : 'Finalizar orden' }}
+          </button>
+        }
+        <button type="button" class="btn btn-outline-secondary" (click)="scanAnother()">Escanear otra orden</button>
+      </div>
+    </div>
+  } @else {
+    <section class="manual-box">
+      <h2>Buscar orden de trabajo</h2>
+      <form (ngSubmit)="submitManualCode()" class="manual-form">
+        <label for="manual-code" class="form-label">Código NEST</label>
+        <div class="manual-code-row">
+          <input
+            id="manual-code"
+            type="text"
+            class="form-control"
+            placeholder="NEST-000001"
+            name="manualCode"
+            [ngModel]="manualCode()"
+            (ngModelChange)="manualCode.set($event)"
+          />
+          <button type="submit" class="btn btn-primary" [disabled]="isLoading()">
+            {{ isLoading() ? 'Buscando...' : 'Buscar orden' }}
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="openScanner()">
+            Escanear
+          </button>
+        </div>
+      </form>
+
+      @if (errorMessage()) {
+        <p class="form-error">{{ errorMessage() }}</p>
+      }
+    </section>
+  }
+
+  <div class="modal fade" tabindex="-1" aria-hidden="true" #scanModal>
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Escanear código de barras</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          @if (!cameraAvailable()) {
+            <p class="form-hint">No se detectó ninguna cámara disponible. Cerrá esta ventana y usá el ingreso manual.</p>
+          }
+          @if (scannerModalOpen()) {
+            <zxing-scanner
+              [enable]="true"
+              [formats]="allowedFormats"
+              (scanSuccess)="onScanSuccess($event)"
+              (camerasFound)="onCamerasFound()"
+              (camerasNotFound)="onCamerasNotFound()"
+            ></zxing-scanner>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

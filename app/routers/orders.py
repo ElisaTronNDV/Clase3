@@ -118,6 +118,14 @@ def confirm_order(payload: WorkOrderCreate, db: Session = Depends(get_db)):
     return _with_low_stock_warning(db, work_order)
 
 
+@router.get("/by-nest-code/{nest_code}", response_model=WorkOrderOut)
+def read_order_by_nest_code(nest_code: str, db: Session = Depends(get_db)):
+    work_order = db.query(WorkOrder).filter(WorkOrder.nest_code == nest_code).first()
+    if work_order is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Orden de trabajo no encontrada")
+    return _with_low_stock_warning(db, work_order)
+
+
 @router.get("/{order_id}", response_model=WorkOrderOut)
 def read_order(order_id: int, db: Session = Depends(get_db)):
     work_order = _get_order_or_404(db, order_id)
@@ -129,3 +137,43 @@ def read_order_barcode(order_id: int, db: Session = Depends(get_db)):
     work_order = _get_order_or_404(db, order_id)
     png_bytes = generate_barcode_png(work_order.nest_code)
     return Response(content=png_bytes, media_type="image/png")
+
+
+@router.post("/{order_id}/close", response_model=WorkOrderOut)
+def close_order(order_id: int, db: Session = Depends(get_db)):
+    work_order = _get_order_or_404(db, order_id)
+    if work_order.status == "cerrada":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="La orden de trabajo ya se encuentra cerrada.",
+        )
+
+    config = get_or_create_system_config(db)
+    product = db.query(Product).filter(Product.id == work_order.product_id).first()
+    product.stock -= work_order.multiplicidad
+    product.committed_stock -= work_order.multiplicidad
+
+    for recorte in work_order.recortes:
+        scrap_product = _find_matching_product(
+            db, work_order.material, work_order.thickness_mm, recorte.largo_mm, recorte.ancho_mm, config.tolerance_mm
+        )
+        if scrap_product is None:
+            db.add(
+                Product(
+                    material=work_order.material,
+                    thickness_mm=work_order.thickness_mm,
+                    length_mm=recorte.largo_mm,
+                    width_mm=recorte.ancho_mm,
+                    stock=recorte.cantidad,
+                    committed_stock=0,
+                    reorder_point=0,
+                )
+            )
+        else:
+            scrap_product.stock += recorte.cantidad
+
+    work_order.status = "cerrada"
+    db.commit()
+    db.refresh(work_order)
+
+    return _with_low_stock_warning(db, work_order)

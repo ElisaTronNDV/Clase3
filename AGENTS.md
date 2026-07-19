@@ -9,6 +9,7 @@ códigos NEST, controlar stock de chapas y dar de alta recortes sobrantes en el 
 - FastAPI (backend/API)
 - SQLite (base de datos)
 - Angular 18 o superior (frontend)
+- Bootstrap 5 (estilos y componentes UI del frontend)
 - pdfplumber (extracción de datos del PDF)
 - python-barcode (generación de código de barras)
 - ZXing ngx-scanner (escaneo de código de barras)

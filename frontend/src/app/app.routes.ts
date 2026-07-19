@@ -50,6 +50,11 @@ export const routes: Routes = [
         path: 'oficina/ordenes/:id/imprimir',
         loadComponent: () =>
           import('./features/orders/print-order.component').then((m) => m.PrintOrderComponent)
+      },
+      {
+        path: 'taller/finalizar-orden',
+        loadComponent: () =>
+          import('./features/taller/scan-order.component').then((m) => m.ScanOrderComponent)
       }
     ]
   },

@@ -167,3 +167,109 @@ def test_order_barcode_is_decodable_and_matches_nest_code(client):
 def test_order_barcode_requires_authentication(client):
     response = client.get("/orders/1/barcode")
     assert response.status_code == 401
+
+
+def test_read_order_by_nest_code_returns_order(client):
+    headers = _auth_headers(client)
+    order = client.post(
+        "/orders", json=_sample_order(create_missing_product=True), headers=headers
+    ).json()
+
+    response = client.get(f"/orders/by-nest-code/{order['nest_code']}", headers=headers)
+    assert response.status_code == 200
+    assert response.json()["id"] == order["id"]
+
+
+def test_read_order_by_nest_code_not_found_returns_404(client):
+    headers = _auth_headers(client)
+    response = client.get("/orders/by-nest-code/NEST-999999", headers=headers)
+    assert response.status_code == 404
+
+
+def test_close_order_discounts_stock_and_committed_stock(client):
+    headers = _auth_headers(client)
+    client.post(
+        "/products",
+        json={
+            "material": "SAE_1010",
+            "thickness_mm": 2.1,
+            "length_mm": 3000,
+            "width_mm": 1500,
+            "stock": 10,
+            "reorder_point": 3,
+        },
+        headers=headers,
+    )
+    order = client.post("/orders", json=_sample_order(multiplicidad=4), headers=headers).json()
+
+    response = client.post(f"/orders/{order['id']}/close", headers=headers)
+    assert response.status_code == 200
+    assert response.json()["status"] == "cerrada"
+
+    products = client.get("/products", headers=headers).json()
+    assert products[0]["stock"] == 6
+    assert products[0]["committed_stock"] == 0
+
+
+def test_close_order_twice_returns_409(client):
+    headers = _auth_headers(client)
+    order = client.post(
+        "/orders", json=_sample_order(create_missing_product=True), headers=headers
+    ).json()
+
+    first = client.post(f"/orders/{order['id']}/close", headers=headers)
+    assert first.status_code == 200
+
+    second = client.post(f"/orders/{order['id']}/close", headers=headers)
+    assert second.status_code == 409
+
+
+def test_close_order_not_found_returns_404(client):
+    headers = _auth_headers(client)
+    response = client.post("/orders/999/close", headers=headers)
+    assert response.status_code == 404
+
+
+def test_close_order_creates_new_product_for_unmatched_scrap(client):
+    headers = _auth_headers(client)
+    order_payload = _sample_order(
+        create_missing_product=True,
+        recortes=[{"pieza": "800.00x400.00_RECT_SCRAP", "largo_mm": 800, "ancho_mm": 400, "cantidad": 3}],
+    )
+    order = client.post("/orders", json=order_payload, headers=headers).json()
+
+    response = client.post(f"/orders/{order['id']}/close", headers=headers)
+    assert response.status_code == 200
+
+    products = client.get("/products", headers=headers).json()
+    scrap_product = next(p for p in products if p["length_mm"] == 800)
+    assert scrap_product["stock"] == 3
+    assert scrap_product["committed_stock"] == 0
+
+
+def test_close_order_increments_existing_matching_scrap_product(client):
+    headers = _auth_headers(client)
+    client.post(
+        "/products",
+        json={
+            "material": "SAE_1010",
+            "thickness_mm": 2.1,
+            "length_mm": 800.3,
+            "width_mm": 400.3,
+            "stock": 5,
+            "reorder_point": 0,
+        },
+        headers=headers,
+    )
+    order_payload = _sample_order(
+        create_missing_product=True,
+        recortes=[{"pieza": "800.00x400.00_RECT_SCRAP", "largo_mm": 800, "ancho_mm": 400, "cantidad": 3}],
+    )
+    order = client.post("/orders", json=order_payload, headers=headers).json()
+
+    response = client.post(f"/orders/{order['id']}/close", headers=headers)
+    assert response.status_code == 200
+
+    products = client.get("/products", headers=headers).json()
+    scrap_product = next(p for p in products if p["length_mm"] == 800.3)
+    assert scrap_product["stock"] == 8
