@@ -19,6 +19,9 @@ códigos NEST, controlar stock de chapas y dar de alta recortes sobrantes en el 
 ## Cómo correr
 Backend (puerto 8000)
 ```
+# Variables de entorno (SECRET_KEY es obligatoria, no tiene default)
+cp .env.example .env
+
 # Configuración del entorno
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
@@ -26,6 +29,11 @@ pip install -r requirements.txt
 # Iniciar servidor
 uvicorn app.main:app --reload
 ```
+
+La base de datos SQLite no se versiona (está en `.gitignore`): se crea vacía en el
+primer arranque y cada usuario se da de alta desde la pantalla de registro (RF-19).
+No hace falta ningún dato precargado para probar la app; hay PDFs de ejemplo del
+archivo de corte en `Archivos de Corte/` para probar RF-01/RF-02.
 
 Frontend (Angular)
 ```
