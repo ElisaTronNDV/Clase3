@@ -1,0 +1,89 @@
+<div class="order-list-page">
+  <h1>Listado de Órdenes de Trabajo</h1>
+
+  <div class="toolbar">
+    <div class="btn-group filter-group" role="group" aria-label="Filtro por estado">
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        [class.active]="filter() === 'todas'"
+        (click)="setFilter('todas')"
+      >
+        Todas
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        [class.active]="filter() === 'vigente'"
+        (click)="setFilter('vigente')"
+      >
+        Vigente
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        [class.active]="filter() === 'cerrada'"
+        (click)="setFilter('cerrada')"
+      >
+        Cerradas
+      </button>
+    </div>
+
+    <input
+      type="text"
+      class="form-control search-input"
+      placeholder="Buscar por código NEST..."
+      [ngModel]="searchTerm()"
+      (ngModelChange)="searchTerm.set($event)"
+    />
+  </div>
+
+  @if (isLoading()) {
+    <p>Cargando...</p>
+  } @else if (errorMessage()) {
+    <p class="form-error">{{ errorMessage() }}</p>
+  } @else if (orders().length === 0) {
+    <p>No hay órdenes de trabajo para mostrar.</p>
+  } @else if (filteredOrders().length === 0) {
+    <p>No se encontraron órdenes con ese código NEST.</p>
+  } @else {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>NEST</th>
+            <th>Material</th>
+            <th>Espesor (mm)</th>
+            <th>Dimensiones (mm)</th>
+            <th>Multiplicidad</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of filteredOrders(); track order.id) {
+            <tr>
+              <td>{{ order.nest_code }}</td>
+              <td>{{ order.material }}</td>
+              <td>{{ order.thickness_mm }}</td>
+              <td>{{ order.length_mm }} x {{ order.width_mm }}</td>
+              <td>{{ order.multiplicidad }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [class.bg-success]="order.status === 'vigente'"
+                  [class.bg-secondary]="order.status === 'cerrada'"
+                >
+                  {{ order.status }}
+                </span>
+              </td>
+              <td>{{ order.created_at | date: 'short' }}</td>
+              <td><a [routerLink]="['/oficina/ordenes', order.id, 'imprimir']">Ver</a></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

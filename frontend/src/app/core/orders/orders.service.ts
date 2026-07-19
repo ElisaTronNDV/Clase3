@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -76,6 +76,20 @@ export interface WorkOrder {
   recortes: WorkOrderScrapInput[];
 }
 
+export type WorkOrderStatus = 'vigente' | 'cerrada';
+
+export interface WorkOrderSummary {
+  id: number;
+  nest_code: string;
+  status: WorkOrderStatus;
+  material: string;
+  thickness_mm: number;
+  length_mm: number;
+  width_mm: number;
+  multiplicidad: number;
+  created_at: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class OrdersService {
   private readonly http = inject(HttpClient);
@@ -104,5 +118,10 @@ export class OrdersService {
 
   getBarcodeBlob(id: number): Observable<Blob> {
     return this.http.get(`${environment.apiUrl}/orders/${id}/barcode`, { responseType: 'blob' });
+  }
+
+  listOrders(status?: WorkOrderStatus): Observable<WorkOrderSummary[]> {
+    const params = status ? new HttpParams().set('status', status) : undefined;
+    return this.http.get<WorkOrderSummary[]>(`${environment.apiUrl}/orders`, { params });
   }
 }

@@ -273,3 +273,57 @@ def test_close_order_increments_existing_matching_scrap_product(client):
     products = client.get("/products", headers=headers).json()
     scrap_product = next(p for p in products if p["length_mm"] == 800.3)
     assert scrap_product["stock"] == 8
+
+
+def test_list_orders_requires_authentication(client):
+    response = client.get("/orders")
+    assert response.status_code == 401
+
+
+def test_list_orders_without_filter_returns_all(client):
+    headers = _auth_headers(client)
+    first = client.post("/orders", json=_sample_order(create_missing_product=True), headers=headers).json()
+    second = client.post(
+        "/orders", json=_sample_order(width_mm=1000, create_missing_product=True), headers=headers
+    ).json()
+    client.post(f"/orders/{second['id']}/close", headers=headers)
+
+    response = client.get("/orders", headers=headers)
+    assert response.status_code == 200
+    ids = [order["id"] for order in response.json()]
+    assert first["id"] in ids
+    assert second["id"] in ids
+
+
+def test_list_orders_filters_by_vigente(client):
+    headers = _auth_headers(client)
+    vigente = client.post("/orders", json=_sample_order(create_missing_product=True), headers=headers).json()
+    cerrada = client.post(
+        "/orders", json=_sample_order(width_mm=1000, create_missing_product=True), headers=headers
+    ).json()
+    client.post(f"/orders/{cerrada['id']}/close", headers=headers)
+
+    response = client.get("/orders", params={"status": "vigente"}, headers=headers)
+    assert response.status_code == 200
+    body = response.json()
+    ids = [order["id"] for order in body]
+    assert vigente["id"] in ids
+    assert cerrada["id"] not in ids
+    assert all(order["status"] == "vigente" for order in body)
+
+
+def test_list_orders_filters_by_cerrada(client):
+    headers = _auth_headers(client)
+    vigente = client.post("/orders", json=_sample_order(create_missing_product=True), headers=headers).json()
+    cerrada = client.post(
+        "/orders", json=_sample_order(width_mm=1000, create_missing_product=True), headers=headers
+    ).json()
+    client.post(f"/orders/{cerrada['id']}/close", headers=headers)
+
+    response = client.get("/orders", params={"status": "cerrada"}, headers=headers)
+    assert response.status_code == 200
+    body = response.json()
+    ids = [order["id"] for order in body]
+    assert cerrada["id"] in ids
+    assert vigente["id"] not in ids
+    assert all(order["status"] == "cerrada" for order in body)

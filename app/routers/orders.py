@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, UploadFile, status
 from sqlalchemy.orm import Session
 
 from app.barcode import generate_barcode_png
@@ -6,7 +6,7 @@ from app.database import get_db
 from app.deps import get_current_user
 from app.models import Product, WorkOrder, WorkOrderPiece, WorkOrderScrap
 from app.pdf_extraction import extract_nests_from_pdf
-from app.schemas import PdfExtractionResult, WorkOrderCreate, WorkOrderOut
+from app.schemas import PdfExtractionResult, WorkOrderCreate, WorkOrderOut, WorkOrderSummaryOut
 from app.system_config import get_or_create_system_config
 
 router = APIRouter(prefix="/orders", tags=["orders"], dependencies=[Depends(get_current_user)])
@@ -116,6 +116,16 @@ def confirm_order(payload: WorkOrderCreate, db: Session = Depends(get_db)):
     db.refresh(work_order)
 
     return _with_low_stock_warning(db, work_order)
+
+
+@router.get("", response_model=list[WorkOrderSummaryOut])
+def list_orders(
+    status_filter: str | None = Query(None, alias="status"), db: Session = Depends(get_db)
+):
+    query = db.query(WorkOrder)
+    if status_filter:
+        query = query.filter(WorkOrder.status == status_filter)
+    return query.order_by(WorkOrder.id.desc()).all()
 
 
 @router.get("/by-nest-code/{nest_code}", response_model=WorkOrderOut)

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
@@ -153,3 +155,17 @@ class WorkOrderOut(BaseModel):
     low_stock_warning: bool
     piezas: list[WorkOrderPieceOut]
     recortes: list[WorkOrderScrapOut]
+
+
+class WorkOrderSummaryOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    nest_code: str
+    status: str
+    material: str
+    thickness_mm: float
+    length_mm: float
+    width_mm: float
+    multiplicidad: int
+    created_at: datetime

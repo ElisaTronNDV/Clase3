@@ -20,6 +20,7 @@ Automatizar la captura de datos desde el archivo de corte (.pdf) para la generac
   - RF-05-b: El sistema debe ofrecer la creación automática del ítem utilizando los datos técnicos extraídos del PDF, quedando inicialmente con stock físico en cero, si el usuario acepta la advertencia de RF-05-a.
 - RF-06: El sistema debe emitir una alerta informativa si el (Stock - Stock Comprometido) alcanza o es inferior al Punto de Pedido. Esto no impide que el proceso continúe dado que las compras están fuera del alcance actual.
 - RF-07: Un usuario autenticado debe poder acceder a un listado de ordenes de trabajo, que permita filtrar por estado (vigente/cerrada)
+  - RF-07-a: El sistema debe permitir buscar dentro del listado una orden de trabajo por código NEST (coincidencia parcial), en forma combinable con el filtro de estado.
 
 ### Taller
 - RF-08: Un usuario autenticado debe poder escanear el código de barras de la orden de trabajo.
@@ -87,6 +88,8 @@ AC-12 (RF-07): Dado un listado de órdenes, cuando el usuario selecciona el filt
 AC-13 (RF-07): Dado un listado de órdenes, cuando el usuario selecciona el filtro "Cerradas", entonces solo deben visualizarse aquellas órdenes finalizadas.
 
 AC-14 (RF-07): Dado un listado de órdenes, cuando el usuario no seleccione ningún filtro, entonces se deben visualizar todas las ordenes.
+
+AC-14-a (RF-07-a): Dado un listado de órdenes, cuando el usuario ingresa un texto en el buscador por código NEST, entonces el listado debe mostrar únicamente las órdenes cuyo código NEST contenga ese texto, respetando el filtro de estado activo.
 
 AC-15 (RF-08 / RF-08-a): Dado que el usuario recibe una orden de trabajo, cuando escanea el código de barras NEST, entonces el sistema debe mostrar la orden asociada en pantalla.
 
