@@ -1,0 +1,55 @@
+.print-order-page {
+  padding: 2rem 1.5rem;
+  max-width: 700px;
+}
+
+.no-print {
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+}
+
+.barcode {
+  display: block;
+  margin: 1rem 0;
+  max-width: 100%;
+}
+
+.order-details {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 1rem;
+  margin: 1rem 0 1.5rem;
+
+  dt {
+    font-weight: 600;
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid #eeeeee;
+  font-size: 0.9rem;
+}
+
+.form-error {
+  color: #c62828;
+}
+
+@media print {
+  .no-print {
+    display: none;
+  }
+}

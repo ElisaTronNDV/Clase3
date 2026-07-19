@@ -8,5 +8,8 @@ python-jose[cryptography]
 python-dotenv
 pdfplumber
 python-multipart
+python-barcode
+pyzbar
+Pillow
 pytest
 httpx

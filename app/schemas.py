@@ -92,3 +92,64 @@ class ExtractedNest(BaseModel):
 
 class PdfExtractionResult(BaseModel):
     nests: list[ExtractedNest]
+
+
+class WorkOrderPieceIn(BaseModel):
+    pieza: str
+    descripcion: str
+    cantidad: int = Field(ge=1)
+
+
+class WorkOrderScrapIn(BaseModel):
+    pieza: str
+    largo_mm: float = Field(gt=0)
+    ancho_mm: float = Field(gt=0)
+    cantidad: int = Field(ge=1)
+
+
+class WorkOrderCreate(BaseModel):
+    nombre_nest: str | None = None
+    material: str = Field(min_length=1)
+    thickness_mm: float = Field(gt=0)
+    length_mm: float = Field(gt=0)
+    width_mm: float = Field(gt=0)
+    multiplicidad: int = Field(ge=1)
+    tiempo_ejecucion_estimado: str | None = None
+    piezas: list[WorkOrderPieceIn] = Field(default_factory=list)
+    recortes: list[WorkOrderScrapIn] = Field(default_factory=list)
+    create_missing_product: bool = False
+
+
+class WorkOrderPieceOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    pieza: str
+    descripcion: str
+    cantidad: int
+
+
+class WorkOrderScrapOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    pieza: str
+    largo_mm: float
+    ancho_mm: float
+    cantidad: int
+
+
+class WorkOrderOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    nest_code: str
+    status: str
+    nombre_nest: str | None
+    material: str
+    thickness_mm: float
+    length_mm: float
+    width_mm: float
+    multiplicidad: int
+    tiempo_ejecucion_estimado: str | None
+    low_stock_warning: bool
+    piezas: list[WorkOrderPieceOut]
+    recortes: list[WorkOrderScrapOut]

@@ -1,0 +1,76 @@
+<div class="print-order-page">
+  @if (order(); as o) {
+    <button type="button" class="no-print" (click)="print()">Imprimir</button>
+
+    <div class="printable">
+      <h1>Orden de Trabajo {{ o.nest_code }}</h1>
+
+      @if (barcodeUrl()) {
+        <img [src]="barcodeUrl()" alt="Código de barras {{ o.nest_code }}" class="barcode" />
+      }
+
+      <dl class="order-details">
+        <dt>Material</dt>
+        <dd>{{ o.material }}</dd>
+        <dt>Espesor (mm)</dt>
+        <dd>{{ o.thickness_mm }}</dd>
+        <dt>Dimensiones (mm)</dt>
+        <dd>{{ o.length_mm }} x {{ o.width_mm }}</dd>
+        <dt>Multiplicidad</dt>
+        <dd>{{ o.multiplicidad }}</dd>
+        @if (o.tiempo_ejecucion_estimado) {
+          <dt>Tiempo de ejecución estimado</dt>
+          <dd>{{ o.tiempo_ejecucion_estimado }}</dd>
+        }
+        <dt>Estado</dt>
+        <dd>{{ o.status }}</dd>
+      </dl>
+
+      <h2>Piezas</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Pieza</th>
+            <th>Descripción</th>
+            <th>Cantidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (pieza of o.piezas; track pieza.pieza) {
+            <tr>
+              <td>{{ pieza.pieza }}</td>
+              <td>{{ pieza.descripcion }}</td>
+              <td>{{ pieza.cantidad }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (o.recortes.length > 0) {
+        <h2>Recortes</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Largo (mm)</th>
+              <th>Ancho (mm)</th>
+              <th>Cantidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (recorte of o.recortes; track recorte.pieza) {
+              <tr>
+                <td>{{ recorte.largo_mm }}</td>
+                <td>{{ recorte.ancho_mm }}</td>
+                <td>{{ recorte.cantidad }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  } @else if (errorMessage()) {
+    <p class="form-error">{{ errorMessage() }}</p>
+  } @else {
+    <p>Cargando...</p>
+  }
+</div>

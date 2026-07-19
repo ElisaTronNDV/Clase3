@@ -98,7 +98,24 @@
           </div>
         }
 
-        <button type="button" disabled title="Próximamente">Confirmar orden</button>
+        @if (confirmedOrders()[i]; as order) {
+          <div class="confirmed-banner">
+            <p>Orden confirmada: <strong>{{ order.nest_code }}</strong></p>
+            @if (order.low_stock_warning) {
+              <p class="stock-warning">
+                ⚠ El stock del producto quedó en o por debajo del punto de pedido.
+              </p>
+            }
+            <a [routerLink]="['/oficina/ordenes', order.id, 'imprimir']">Ver e imprimir orden</a>
+          </div>
+        } @else {
+          @if (confirmErrors()[i]) {
+            <p class="form-error">{{ confirmErrors()[i] }}</p>
+          }
+          <button type="button" [disabled]="confirmingIndex() === i" (click)="confirmNest(i)">
+            {{ confirmingIndex() === i ? 'Confirmando...' : 'Confirmar orden' }}
+          </button>
+        }
       </div>
     }
   }

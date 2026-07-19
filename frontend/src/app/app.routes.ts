@@ -45,6 +45,11 @@ export const routes: Routes = [
         path: 'oficina/nueva-orden',
         loadComponent: () =>
           import('./features/orders/create-order.component').then((m) => m.CreateOrderComponent)
+      },
+      {
+        path: 'oficina/ordenes/:id/imprimir',
+        loadComponent: () =>
+          import('./features/orders/print-order.component').then((m) => m.PrintOrderComponent)
       }
     ]
   },

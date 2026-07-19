@@ -77,10 +77,30 @@ td {
 
 button {
   padding: 0.6rem 1rem;
-  cursor: not-allowed;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
 }
 
 .form-error {
   color: #c62828;
   font-size: 0.85rem;
+}
+
+.confirmed-banner {
+  border: 1px solid #2e7d32;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  background: #e8f5e9;
+
+  p {
+    margin: 0 0 0.5rem;
+  }
+
+  .stock-warning {
+    color: #b26a00;
+  }
 }
