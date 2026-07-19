@@ -90,6 +90,22 @@ button {
   font-size: 0.85rem;
 }
 
+.order-details {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+
+  dt {
+    font-weight: 600;
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
 .confirmed-banner {
   border: 1px solid #2e7d32;
   border-radius: 6px;

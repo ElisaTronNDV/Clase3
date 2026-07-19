@@ -119,4 +119,37 @@
       </div>
     }
   }
+
+  <div class="modal fade" tabindex="-1" aria-hidden="true" #createProductModal>
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Producto no encontrado</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          @if (pendingProductData(); as p) {
+            <p>
+              El producto no existe en el maestro de Inventario. ¿Querés crearlo automáticamente
+              con estos datos técnicos (stock físico en cero)?
+            </p>
+            <dl class="order-details">
+              <dt>Material</dt>
+              <dd><input type="text" class="form-control" [value]="p.material" readonly /></dd>
+              <dt>Espesor (mm)</dt>
+              <dd><input type="text" class="form-control" [value]="p.thickness_mm" readonly /></dd>
+              <dt>Largo (mm)</dt>
+              <dd><input type="text" class="form-control" [value]="p.length_mm" readonly /></dd>
+              <dt>Ancho (mm)</dt>
+              <dd><input type="text" class="form-control" [value]="p.width_mm" readonly /></dd>
+            </dl>
+          }
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" (click)="confirmCreateMissingProduct()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

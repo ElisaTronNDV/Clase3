@@ -1,9 +1,19 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { Modal } from 'bootstrap';
 
 import { ExtractedNest, OrdersService, WorkOrder } from '../../core/orders/orders.service';
+
+interface ProductNotFoundDetail {
+  code: string;
+  message: string;
+  material: string;
+  thickness_mm: number;
+  length_mm: number;
+  width_mm: number;
+}
 
 @Component({
   selector: 'app-create-order',
@@ -12,9 +22,25 @@ import { ExtractedNest, OrdersService, WorkOrder } from '../../core/orders/order
   templateUrl: './create-order.component.html',
   styleUrl: './create-order.component.scss'
 })
-export class CreateOrderComponent {
+export class CreateOrderComponent implements AfterViewInit, OnDestroy {
   private readonly ordersService = inject(OrdersService);
   private readonly fb = inject(FormBuilder);
+
+  @ViewChild('createProductModal') private readonly createProductModalRef!: ElementRef<HTMLElement>;
+  private modal: Modal | null = null;
+  private modalConfirmed = false;
+
+  private readonly onModalHidden = (): void => {
+    if (!this.modalConfirmed) {
+      const index = this.pendingCreateIndex();
+      if (index !== null) {
+        this.setConfirmError(index, 'No se confirmó: el producto no existe en el maestro.');
+      }
+    }
+    this.modalConfirmed = false;
+    this.pendingCreateIndex.set(null);
+    this.pendingProductData.set(null);
+  };
 
   readonly selectedFileName = signal<string | null>(null);
   readonly isUploading = signal(false);
@@ -23,8 +49,22 @@ export class CreateOrderComponent {
   readonly confirmedOrders = signal<(WorkOrder | null)[]>([]);
   readonly confirmErrors = signal<(string | null)[]>([]);
   readonly confirmingIndex = signal<number | null>(null);
+  readonly pendingCreateIndex = signal<number | null>(null);
+  readonly pendingProductData = signal<ProductNotFoundDetail | null>(null);
 
   forms: FormGroup[] = [];
+
+  ngAfterViewInit(): void {
+    const element = this.createProductModalRef.nativeElement;
+    this.modal = new Modal(element);
+    element.addEventListener('hidden.bs.modal', this.onModalHidden);
+  }
+
+  ngOnDestroy(): void {
+    const element = this.createProductModalRef?.nativeElement;
+    element?.removeEventListener('hidden.bs.modal', this.onModalHidden);
+    this.modal?.dispose();
+  }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -102,21 +142,25 @@ export class CreateOrderComponent {
           this.confirmingIndex.set(null);
 
           if (error.status === 409 && error.error?.detail?.code === 'product_not_found') {
-            const wantsToCreate = window.confirm(
-              'El producto no existe en el maestro de Inventario. ¿Querés crearlo automáticamente ' +
-                'con estos datos técnicos (stock físico en cero)?'
-            );
-            if (wantsToCreate) {
-              this.confirmNest(index, true);
-              return;
-            }
-            this.setConfirmError(index, 'No se confirmó: el producto no existe en el maestro.');
+            this.pendingCreateIndex.set(index);
+            this.pendingProductData.set(error.error.detail);
+            this.modal?.show();
             return;
           }
 
           this.setConfirmError(index, 'No se pudo confirmar la orden.');
         }
       });
+  }
+
+  confirmCreateMissingProduct(): void {
+    const index = this.pendingCreateIndex();
+    if (index === null) {
+      return;
+    }
+    this.modalConfirmed = true;
+    this.modal?.hide();
+    this.confirmNest(index, true);
   }
 
   private setConfirmError(index: number, message: string | null): void {
