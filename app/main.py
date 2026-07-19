@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import CORS_ORIGINS
 from app.database import Base, engine
-from app.routers import auth, config, products
+from app.routers import auth, config, orders, products
 
 Base.metadata.create_all(bind=engine)
 
@@ -20,3 +20,4 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(config.router)
 app.include_router(products.router)
+app.include_router(orders.router)

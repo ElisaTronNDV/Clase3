@@ -40,6 +40,11 @@ export const routes: Routes = [
         path: 'inventario/:id/editar',
         loadComponent: () =>
           import('./features/inventory/inventory-form.component').then((m) => m.InventoryFormComponent)
+      },
+      {
+        path: 'oficina/nueva-orden',
+        loadComponent: () =>
+          import('./features/orders/create-order.component').then((m) => m.CreateOrderComponent)
       }
     ]
   },

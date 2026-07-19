@@ -52,6 +52,33 @@
     color: #9e9e9e;
     cursor: not-allowed;
   }
+
+  .nav-group-label {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    font-weight: 600;
+  }
+
+  .nav-sublist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    a {
+      padding-left: 1.5rem;
+      font-size: 0.95em;
+    }
+
+    li.disabled {
+      padding: 0.5rem 0.75rem 0.5rem 1.5rem;
+      color: #9e9e9e;
+      cursor: not-allowed;
+      font-size: 0.95em;
+    }
+  }
 }
 
 .sidebar-footer {

@@ -5,7 +5,13 @@
     <ul class="nav-list">
       <li><a routerLink="/configuracion" routerLinkActive="active">Configuración</a></li>
       <li><a routerLink="/inventario" routerLinkActive="active">Inventario</a></li>
-      <li class="disabled" title="Próximamente">Oficina</li>
+      <li class="nav-group">
+        <span class="nav-group-label">Oficina</span>
+        <ul class="nav-sublist">
+          <li><a routerLink="/oficina/nueva-orden" routerLinkActive="active">Crear Orden de Trabajo</a></li>
+          <li class="disabled" title="Próximamente">Listado de Órdenes de Trabajo</li>
+        </ul>
+      </li>
       <li class="disabled" title="Próximamente">Taller</li>
     </ul>
 

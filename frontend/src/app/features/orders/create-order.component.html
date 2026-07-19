@@ -1,0 +1,105 @@
+<div class="create-order-page">
+  <h1>Crear Orden de Trabajo</h1>
+
+  <div class="upload-box">
+    <label for="pdf-file">Archivo de corte (PDF)</label>
+    <input id="pdf-file" type="file" accept=".pdf" (change)="onFileSelected($event)" />
+    @if (selectedFileName()) {
+      <p class="file-name">{{ selectedFileName() }}</p>
+    }
+  </div>
+
+  @if (isUploading()) {
+    <p>Procesando el archivo...</p>
+  }
+
+  @if (errorMessage()) {
+    <p class="form-error">{{ errorMessage() }}</p>
+  }
+
+  @if (nests().length > 0) {
+    <p class="nest-count">
+      Se detectaron {{ nests().length }} {{ nests().length === 1 ? 'nest' : 'nests' }} en el archivo.
+      Revisá y corregí los datos antes de confirmar cada orden.
+    </p>
+
+    @for (nest of nests(); track nest.page_index; let i = $index) {
+      <div class="nest-card">
+        <h2>
+          Nest {{ i + 1 }} de {{ nests().length }}
+          @if (nest.nombre_nest) {
+            <span class="nest-name">— {{ nest.nombre_nest }}</span>
+          }
+        </h2>
+
+        <form [formGroup]="forms[i]" class="nest-form">
+          <label [for]="'multiplicidad-' + i">Multiplicidad</label>
+          <input [id]="'multiplicidad-' + i" type="number" formControlName="multiplicidad" />
+
+          <label [for]="'largo-' + i">Largo (mm)</label>
+          <input [id]="'largo-' + i" type="number" step="0.001" formControlName="largo_mm" />
+
+          <label [for]="'ancho-' + i">Ancho (mm)</label>
+          <input [id]="'ancho-' + i" type="number" step="0.001" formControlName="ancho_mm" />
+
+          <label [for]="'espesor-' + i">Espesor (mm)</label>
+          <input [id]="'espesor-' + i" type="number" step="0.001" formControlName="espesor_mm" />
+
+          <label [for]="'material-' + i">Material</label>
+          <input [id]="'material-' + i" type="text" formControlName="material" />
+
+          <label [for]="'tiempo-' + i">Tiempo de ejecución estimado</label>
+          <input [id]="'tiempo-' + i" type="text" formControlName="tiempo_ejecucion_estimado" />
+        </form>
+
+        <h3>Piezas</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Pieza</th>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (pieza of nest.piezas; track pieza.pieza) {
+                <tr>
+                  <td>{{ pieza.pieza }}</td>
+                  <td>{{ pieza.descripcion }}</td>
+                  <td>{{ pieza.cantidad }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if (nest.recortes.length > 0) {
+          <h3>Recortes detectados</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Largo (mm)</th>
+                  <th>Ancho (mm)</th>
+                  <th>Cantidad</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (recorte of nest.recortes; track recorte.pieza) {
+                  <tr>
+                    <td>{{ recorte.largo_mm }}</td>
+                    <td>{{ recorte.ancho_mm }}</td>
+                    <td>{{ recorte.cantidad }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        <button type="button" disabled title="Próximamente">Confirmar orden</button>
+      </div>
+    }
+  }
+</div>

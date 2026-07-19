@@ -62,3 +62,33 @@ class ProductOut(BaseModel):
     stock: int
     committed_stock: int
     reorder_point: int
+
+
+class ExtractedPiece(BaseModel):
+    pieza: str
+    descripcion: str
+    cantidad: int
+
+
+class ExtractedScrap(BaseModel):
+    pieza: str
+    largo_mm: float
+    ancho_mm: float
+    cantidad: int
+
+
+class ExtractedNest(BaseModel):
+    page_index: int
+    nombre_nest: str | None
+    multiplicidad: int | None
+    largo_mm: float | None
+    ancho_mm: float | None
+    espesor_mm: float | None
+    material: str | None
+    tiempo_ejecucion_estimado: str | None
+    piezas: list[ExtractedPiece]
+    recortes: list[ExtractedScrap]
+
+
+class PdfExtractionResult(BaseModel):
+    nests: list[ExtractedNest]
