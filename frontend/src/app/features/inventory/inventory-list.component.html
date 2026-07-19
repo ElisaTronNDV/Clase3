@@ -1,18 +1,18 @@
 <div class="inventory-page">
   <div class="header">
     <h1>Inventario</h1>
-    <a routerLink="/inventario/nuevo" class="new-product-link">+ Nuevo producto</a>
+    <a routerLink="/inventario/nuevo" class="btn btn-primary">+ Nuevo producto</a>
   </div>
 
   @if (isLoading()) {
     <p>Cargando...</p>
   } @else if (errorMessage()) {
-    <p class="form-error">{{ errorMessage() }}</p>
+    <div class="alert alert-danger py-2">{{ errorMessage() }}</div>
   } @else if (products().length === 0) {
     <p>No hay productos cargados todavía.</p>
   } @else {
     <div class="table-wrapper">
-      <table>
+      <table class="table table-striped table-hover align-middle">
         <thead>
           <tr>
             <th>Id</th>
@@ -37,7 +37,7 @@
               <td>{{ product.stock }}</td>
               <td>{{ product.committed_stock }}</td>
               <td>{{ product.reorder_point }}</td>
-              <td><a [routerLink]="['/inventario', product.id, 'editar']">Editar</a></td>
+              <td><a [routerLink]="['/inventario', product.id, 'editar']" class="btn btn-sm btn-outline-secondary">Editar</a></td>
             </tr>
           }
         </tbody>

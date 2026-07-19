@@ -5,54 +5,68 @@
     <p>Cargando...</p>
   } @else {
     <form [formGroup]="form" (ngSubmit)="submit()" class="product-form">
-      <label for="material">Material</label>
-      <input id="material" type="text" formControlName="material" />
-      @if (form.controls.material.invalid && form.controls.material.touched) {
-        <p class="field-error">El material es obligatorio.</p>
-      }
+      <div class="mb-3">
+        <label for="material" class="form-label">Material</label>
+        <input id="material" type="text" class="form-control" formControlName="material" />
+        @if (form.controls.material.invalid && form.controls.material.touched) {
+          <div class="form-text text-danger">El material es obligatorio.</div>
+        }
+      </div>
 
-      <label for="thickness_mm">Espesor (mm)</label>
-      <input id="thickness_mm" type="number" step="0.1" formControlName="thickness_mm" />
-      @if (form.controls.thickness_mm.invalid && form.controls.thickness_mm.touched) {
-        <p class="field-error">Ingresá un espesor mayor a 0.</p>
-      }
+      <div class="mb-3">
+        <label for="thickness_mm" class="form-label">Espesor (mm)</label>
+        <input id="thickness_mm" type="number" step="0.1" class="form-control" formControlName="thickness_mm" />
+        @if (form.controls.thickness_mm.invalid && form.controls.thickness_mm.touched) {
+          <div class="form-text text-danger">Ingresá un espesor mayor a 0.</div>
+        }
+      </div>
 
-      <label for="length_mm">Largo (mm)</label>
-      <input id="length_mm" type="number" step="1" formControlName="length_mm" />
-      @if (form.controls.length_mm.invalid && form.controls.length_mm.touched) {
-        <p class="field-error">Ingresá un largo mayor a 0.</p>
-      }
+      <div class="mb-3">
+        <label for="length_mm" class="form-label">Largo (mm)</label>
+        <input id="length_mm" type="number" step="1" class="form-control" formControlName="length_mm" />
+        @if (form.controls.length_mm.invalid && form.controls.length_mm.touched) {
+          <div class="form-text text-danger">Ingresá un largo mayor a 0.</div>
+        }
+      </div>
 
-      <label for="width_mm">Ancho (mm)</label>
-      <input id="width_mm" type="number" step="1" formControlName="width_mm" />
-      @if (form.controls.width_mm.invalid && form.controls.width_mm.touched) {
-        <p class="field-error">Ingresá un ancho mayor a 0.</p>
-      }
+      <div class="mb-3">
+        <label for="width_mm" class="form-label">Ancho (mm)</label>
+        <input id="width_mm" type="number" step="1" class="form-control" formControlName="width_mm" />
+        @if (form.controls.width_mm.invalid && form.controls.width_mm.touched) {
+          <div class="form-text text-danger">Ingresá un ancho mayor a 0.</div>
+        }
+      </div>
 
-      <label for="stock">Stock</label>
-      <input id="stock" type="number" step="1" formControlName="stock" />
-      @if (form.controls.stock.invalid && form.controls.stock.touched) {
-        <p class="field-error">Ingresá un stock válido (0 o más).</p>
-      }
+      <div class="mb-3">
+        <label for="stock" class="form-label">Stock</label>
+        <input id="stock" type="number" step="1" class="form-control" formControlName="stock" />
+        @if (form.controls.stock.invalid && form.controls.stock.touched) {
+          <div class="form-text text-danger">Ingresá un stock válido (0 o más).</div>
+        }
+      </div>
 
       @if (isEditMode) {
-        <label for="committed_stock">Stock Comprometido</label>
-        <input id="committed_stock" type="number" [value]="committedStock()" disabled />
+        <div class="mb-3">
+          <label for="committed_stock" class="form-label">Stock Comprometido</label>
+          <input id="committed_stock" type="number" class="form-control" [value]="committedStock()" disabled />
+        </div>
       }
 
-      <label for="reorder_point">Punto de Pedido</label>
-      <input id="reorder_point" type="number" step="1" formControlName="reorder_point" />
-      @if (form.controls.reorder_point.invalid && form.controls.reorder_point.touched) {
-        <p class="field-error">Ingresá un punto de pedido válido (0 o más).</p>
-      }
+      <div class="mb-3">
+        <label for="reorder_point" class="form-label">Punto de Pedido</label>
+        <input id="reorder_point" type="number" step="1" class="form-control" formControlName="reorder_point" />
+        @if (form.controls.reorder_point.invalid && form.controls.reorder_point.touched) {
+          <div class="form-text text-danger">Ingresá un punto de pedido válido (0 o más).</div>
+        }
+      </div>
 
       @if (errorMessage()) {
-        <p class="form-error">{{ errorMessage() }}</p>
+        <div class="alert alert-danger py-2">{{ errorMessage() }}</div>
       }
 
       <div class="actions">
-        <button type="submit" [disabled]="isSubmitting()">Guardar</button>
-        <a routerLink="/inventario">Cancelar</a>
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting()">Guardar</button>
+        <a routerLink="/inventario" class="btn btn-outline-secondary">Cancelar</a>
       </div>
     </form>
   }

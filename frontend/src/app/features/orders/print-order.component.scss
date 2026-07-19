@@ -4,8 +4,6 @@
 }
 
 .no-print {
-  padding: 0.6rem 1rem;
-  cursor: pointer;
   margin-bottom: 1.5rem;
 }
 
@@ -31,21 +29,7 @@
 }
 
 table {
-  border-collapse: collapse;
-  width: 100%;
   margin-bottom: 1.5rem;
-}
-
-th,
-td {
-  text-align: left;
-  padding: 0.4rem 0.6rem;
-  border-bottom: 1px solid #eeeeee;
-  font-size: 0.9rem;
-}
-
-.form-error {
-  color: #c62828;
 }
 
 @media print {

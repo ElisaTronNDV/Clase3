@@ -1,9 +1,9 @@
 <div class="create-order-page">
   <h1>Crear Orden de Trabajo</h1>
 
-  <div class="upload-box">
-    <label for="pdf-file">Archivo de corte (PDF)</label>
-    <input id="pdf-file" type="file" accept=".pdf" (change)="onFileSelected($event)" />
+  <div class="upload-box mb-3">
+    <label for="pdf-file" class="form-label">Archivo de corte (PDF)</label>
+    <input id="pdf-file" type="file" accept=".pdf" class="form-control" (change)="onFileSelected($event)" />
     @if (selectedFileName()) {
       <p class="file-name">{{ selectedFileName() }}</p>
     }
@@ -14,7 +14,7 @@
   }
 
   @if (errorMessage()) {
-    <p class="form-error">{{ errorMessage() }}</p>
+    <div class="alert alert-danger py-2">{{ errorMessage() }}</div>
   }
 
   @if (nests().length > 0) {
@@ -24,98 +24,117 @@
     </p>
 
     @for (nest of nests(); track nest.page_index; let i = $index) {
-      <div class="nest-card">
-        <h2>
-          Nest {{ i + 1 }} de {{ nests().length }}
-          @if (nest.nombre_nest) {
-            <span class="nest-name">— {{ nest.nombre_nest }}</span>
-          }
-        </h2>
+      <div class="card nest-card">
+        <div class="card-body">
+          <h2 class="h5">
+            Nest {{ i + 1 }} de {{ nests().length }}
+            @if (nest.nombre_nest) {
+              <span class="nest-name">— {{ nest.nombre_nest }}</span>
+            }
+          </h2>
 
-        <form [formGroup]="forms[i]" class="nest-form">
-          <label [for]="'multiplicidad-' + i">Multiplicidad</label>
-          <input [id]="'multiplicidad-' + i" type="number" formControlName="multiplicidad" />
+          <form [formGroup]="forms[i]" class="nest-form row g-2">
+            <div class="col-6 col-md-4">
+              <label [for]="'multiplicidad-' + i" class="form-label">Multiplicidad</label>
+              <input [id]="'multiplicidad-' + i" type="number" class="form-control" formControlName="multiplicidad" />
+            </div>
 
-          <label [for]="'largo-' + i">Largo (mm)</label>
-          <input [id]="'largo-' + i" type="number" step="0.001" formControlName="largo_mm" />
+            <div class="col-6 col-md-4">
+              <label [for]="'largo-' + i" class="form-label">Largo (mm)</label>
+              <input [id]="'largo-' + i" type="number" step="0.001" class="form-control" formControlName="largo_mm" />
+            </div>
 
-          <label [for]="'ancho-' + i">Ancho (mm)</label>
-          <input [id]="'ancho-' + i" type="number" step="0.001" formControlName="ancho_mm" />
+            <div class="col-6 col-md-4">
+              <label [for]="'ancho-' + i" class="form-label">Ancho (mm)</label>
+              <input [id]="'ancho-' + i" type="number" step="0.001" class="form-control" formControlName="ancho_mm" />
+            </div>
 
-          <label [for]="'espesor-' + i">Espesor (mm)</label>
-          <input [id]="'espesor-' + i" type="number" step="0.001" formControlName="espesor_mm" />
+            <div class="col-6 col-md-4">
+              <label [for]="'espesor-' + i" class="form-label">Espesor (mm)</label>
+              <input [id]="'espesor-' + i" type="number" step="0.001" class="form-control" formControlName="espesor_mm" />
+            </div>
 
-          <label [for]="'material-' + i">Material</label>
-          <input [id]="'material-' + i" type="text" formControlName="material" />
+            <div class="col-6 col-md-4">
+              <label [for]="'material-' + i" class="form-label">Material</label>
+              <input [id]="'material-' + i" type="text" class="form-control" formControlName="material" />
+            </div>
 
-          <label [for]="'tiempo-' + i">Tiempo de ejecución estimado</label>
-          <input [id]="'tiempo-' + i" type="text" formControlName="tiempo_ejecucion_estimado" />
-        </form>
+            <div class="col-6 col-md-4">
+              <label [for]="'tiempo-' + i" class="form-label">Tiempo de ejecución estimado</label>
+              <input [id]="'tiempo-' + i" type="text" class="form-control" formControlName="tiempo_ejecucion_estimado" />
+            </div>
+          </form>
 
-        <h3>Piezas</h3>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Pieza</th>
-                <th>Descripción</th>
-                <th>Cantidad</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (pieza of nest.piezas; track pieza.pieza) {
-                <tr>
-                  <td>{{ pieza.pieza }}</td>
-                  <td>{{ pieza.descripcion }}</td>
-                  <td>{{ pieza.cantidad }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-
-        @if (nest.recortes.length > 0) {
-          <h3>Recortes detectados</h3>
+          <h3 class="h6 mt-3">Piezas</h3>
           <div class="table-wrapper">
-            <table>
+            <table class="table table-striped table-sm">
               <thead>
                 <tr>
-                  <th>Largo (mm)</th>
-                  <th>Ancho (mm)</th>
+                  <th>Pieza</th>
+                  <th>Descripción</th>
                   <th>Cantidad</th>
                 </tr>
               </thead>
               <tbody>
-                @for (recorte of nest.recortes; track recorte.pieza) {
+                @for (pieza of nest.piezas; track pieza.pieza) {
                   <tr>
-                    <td>{{ recorte.largo_mm }}</td>
-                    <td>{{ recorte.ancho_mm }}</td>
-                    <td>{{ recorte.cantidad }}</td>
+                    <td>{{ pieza.pieza }}</td>
+                    <td>{{ pieza.descripcion }}</td>
+                    <td>{{ pieza.cantidad }}</td>
                   </tr>
                 }
               </tbody>
             </table>
           </div>
-        }
 
-        @if (confirmedOrders()[i]; as order) {
-          <div class="confirmed-banner">
-            <p>Orden confirmada: <strong>{{ order.nest_code }}</strong></p>
-            @if (order.low_stock_warning) {
-              <p class="stock-warning">
-                ⚠ El stock del producto quedó en o por debajo del punto de pedido.
-              </p>
-            }
-            <a [routerLink]="['/oficina/ordenes', order.id, 'imprimir']">Ver e imprimir orden</a>
-          </div>
-        } @else {
-          @if (confirmErrors()[i]) {
-            <p class="form-error">{{ confirmErrors()[i] }}</p>
+          @if (nest.recortes.length > 0) {
+            <h3 class="h6">Recortes detectados</h3>
+            <div class="table-wrapper">
+              <table class="table table-striped table-sm">
+                <thead>
+                  <tr>
+                    <th>Largo (mm)</th>
+                    <th>Ancho (mm)</th>
+                    <th>Cantidad</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (recorte of nest.recortes; track recorte.pieza) {
+                    <tr>
+                      <td>{{ recorte.largo_mm }}</td>
+                      <td>{{ recorte.ancho_mm }}</td>
+                      <td>{{ recorte.cantidad }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
           }
-          <button type="button" [disabled]="confirmingIndex() === i" (click)="confirmNest(i)">
-            {{ confirmingIndex() === i ? 'Confirmando...' : 'Confirmar orden' }}
-          </button>
-        }
+
+          @if (confirmedOrders()[i]; as order) {
+            <div class="alert alert-success confirmed-banner">
+              <p>Orden confirmada: <strong>{{ order.nest_code }}</strong></p>
+              @if (order.low_stock_warning) {
+                <p class="stock-warning">
+                  ⚠ El stock del producto quedó en o por debajo del punto de pedido.
+                </p>
+              }
+              <a [routerLink]="['/oficina/ordenes', order.id, 'imprimir']">Ver e imprimir orden</a>
+            </div>
+          } @else {
+            @if (confirmErrors()[i]) {
+              <div class="alert alert-danger py-2">{{ confirmErrors()[i] }}</div>
+            }
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="confirmingIndex() === i"
+              (click)="confirmNest(i)"
+            >
+              {{ confirmingIndex() === i ? 'Confirmando...' : 'Confirmar orden' }}
+            </button>
+          }
+        </div>
       </div>
     }
   }

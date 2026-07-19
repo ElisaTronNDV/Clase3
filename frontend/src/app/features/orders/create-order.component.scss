@@ -4,14 +4,10 @@
 }
 
 .upload-box {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-
   .file-name {
     font-size: 0.85rem;
     color: #616161;
+    margin-top: 0.5rem;
   }
 }
 
@@ -21,73 +17,36 @@
 }
 
 .nest-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 1.25rem;
   margin-bottom: 1.5rem;
-
-  h2 {
-    margin-top: 0;
-    font-size: 1.1rem;
-  }
 
   .nest-name {
     font-weight: 400;
     color: #616161;
   }
-
-  h3 {
-    font-size: 0.95rem;
-    margin-bottom: 0.5rem;
-  }
 }
 
 .nest-form {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.5rem 1rem;
   margin-bottom: 1rem;
-
-  input {
-    padding: 0.4rem;
-    font-size: 0.95rem;
-    width: 100%;
-    box-sizing: border-box;
-  }
 }
 
 .table-wrapper {
   overflow-x: auto;
   margin-bottom: 1rem;
-}
 
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-th,
-td {
-  text-align: left;
-  padding: 0.4rem 0.6rem;
-  border-bottom: 1px solid #eeeeee;
-  font-size: 0.9rem;
-  white-space: nowrap;
-}
-
-button {
-  padding: 0.6rem 1rem;
-  cursor: pointer;
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
+  th,
+  td {
+    white-space: nowrap;
   }
 }
 
-.form-error {
-  color: #c62828;
-  font-size: 0.85rem;
+.confirmed-banner {
+  p {
+    margin: 0 0 0.5rem;
+  }
+
+  .stock-warning {
+    color: #b26a00;
+  }
 }
 
 .order-details {
@@ -103,20 +62,5 @@ button {
 
   dd {
     margin: 0;
-  }
-}
-
-.confirmed-banner {
-  border: 1px solid #2e7d32;
-  border-radius: 6px;
-  padding: 0.75rem 1rem;
-  background: #e8f5e9;
-
-  p {
-    margin: 0 0 0.5rem;
-  }
-
-  .stock-warning {
-    color: #b26a00;
   }
 }

@@ -1,1 +1,18 @@
-/* You can add global styles to this file, and also import other style files */
+// Paleta de marca
+$primary: #ee332b;
+$secondary: #3d3e3e;
+
+@import 'bootstrap/scss/bootstrap';
+
+body {
+  background-color: #fff;
+}
+
+// Bootstrap calcula texto negro sobre $primary por contraste, pero con este rojo
+// de marca el texto blanco se ve mejor.
+.btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-color: #fff;
+  --bs-btn-disabled-color: #fff;
+}

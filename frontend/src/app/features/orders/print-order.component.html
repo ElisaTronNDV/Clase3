@@ -1,6 +1,6 @@
 <div class="print-order-page">
   @if (order(); as o) {
-    <button type="button" class="no-print" (click)="print()">Imprimir</button>
+    <button type="button" class="btn btn-primary no-print" (click)="print()">Imprimir</button>
 
     <div class="printable">
       <h1>Orden de Trabajo {{ o.nest_code }}</h1>
@@ -27,7 +27,7 @@
       </dl>
 
       <h2>Piezas</h2>
-      <table>
+      <table class="table table-sm">
         <thead>
           <tr>
             <th>Pieza</th>
@@ -69,7 +69,7 @@
       }
     </div>
   } @else if (errorMessage()) {
-    <p class="form-error">{{ errorMessage() }}</p>
+    <div class="alert alert-danger py-2">{{ errorMessage() }}</div>
   } @else {
     <p>Cargando...</p>
   }

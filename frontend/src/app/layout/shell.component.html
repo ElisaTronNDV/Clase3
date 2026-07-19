@@ -24,7 +24,7 @@
       @if (currentUser(); as user) {
         <p class="user-email">{{ user.email }}</p>
       }
-      <button type="button" (click)="logout()">Cerrar sesión</button>
+      <button type="button" class="btn btn-outline-light btn-sm" (click)="logout()">Cerrar sesión</button>
     </div>
   </nav>
 
